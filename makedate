@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+import datetime
+
+target = datetime.datetime(2017, 11, 6, 0, 0, 0)
+
+mtab = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+def days_since_jan1_2000(y, m, d):
+    t = 0
+    for i in range(y-2000):
+	t = t + 365
+	if i % 4 == 0:
+	    t = t + 1 
+    for i in range(1, m):
+	t = t + mtab[i]
+	if y % 4 == 0 and i == 2:
+	    t = t + 1 
+    t = t + d - 1
+    return t
+
+print "/* AUTOMATICALLY GENERATED */"
+print "#define TARGET_YEAR\t%d" % (target.year-2000)
+print "#define TARGET_MONTH\t%d" % target.month
+print "#define TARGET_DAY\t%d" % target.day
+print "#define TARGET_HOUR\t%d" % target.hour
+print "#define TARGET_MINUTE\t%d" % target.minute
+print "#define TARGET_SECOND\t%d" % target.second
+
+print "#define TARGET_DAYS_SINCE_JAN1_2000\t%d\n" % days_since_jan1_2000(target.year, target.month, target.day)

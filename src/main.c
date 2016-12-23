@@ -36,7 +36,7 @@ const uint8_t message2[] PROGMEM = {
 	0b1011111,		// a
 	0b1101101,		// S
 	0b0000000,		// 
-	0b0000000,		// P
+	0b1110011,		// P
 	0b1011111,		// a
 	0b1101101,		// S
         0b1111000,              // t
@@ -184,10 +184,10 @@ const uint8_t monthtab[] PROGMEM = {
 	31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
 } ;
 
-uint16_t
+int16_t
 days_since_2000(uint8_t y, uint8_t m, uint8_t d)
 {
-    uint16_t t = 0 ;
+    int16_t t = 0 ;
  
     for (uint8_t i=0; i<y; i++) {
 	t += 365 ;
@@ -200,9 +200,9 @@ days_since_2000(uint8_t y, uint8_t m, uint8_t d)
 	if ((y & 3) == 0 && (i == 2))
 	    t++;
     }
-    t += d ;
+    t += d - 1 ;
 
-    return (int) t ;
+    return t ;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -305,7 +305,7 @@ alarm(uint8_t on)
 int
 main(void)
 {
-    uint16_t days ;
+    int16_t days ;
     uint8_t y, m, d ;
 
     timer_init() ;

@@ -319,9 +319,9 @@ main(void)
         i2c_start_wait(CLOCK_ADDRESS + I2C_WRITE) ;
         i2c_write(4) ;
         i2c_rep_start(CLOCK_ADDRESS + I2C_READ) ;
-	y = bcd2byte(i2c_readAck()) ;
+	d = bcd2byte(i2c_readAck()) ;
 	m = bcd2byte(i2c_readAck()) ;
-	d = bcd2byte(i2c_readNak()) ;
+	y = bcd2byte(i2c_readNak()) ;
         i2c_stop() ;
 
         days = TARGET_DAYS_SINCE_JAN1_2000 - days_since_2000(y, m, d) ;
@@ -353,13 +353,13 @@ main(void)
 
             // Logic to strip leading zeros...
             if (days >= (1<<12))
-                d0 = pgm_read_byte(tm1640_font[d0]) ;
+                d0 = pgm_read_byte(tm1640_font+d0) ;
             if (days >= (1<<8))
-                d1 = pgm_read_byte(tm1640_font[d1]) ;
+                d1 = pgm_read_byte(tm1640_font+d1) ;
             if (days >= (1<<4))
-                d2 = pgm_read_byte(tm1640_font[d2]) ;
+                d2 = pgm_read_byte(tm1640_font+d2) ;
 
-            d3 = pgm_read_byte(tm1640_font[d3]) ;
+            d3 = pgm_read_byte(tm1640_font+d3) ;
                 
             tm1640_buf[0x0] = 0b0000000;		// 
             tm1640_buf[0x1] = 0b0000000;		// 

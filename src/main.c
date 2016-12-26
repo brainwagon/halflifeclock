@@ -176,8 +176,6 @@ tm1640_init()
 
 ////////////////////////////////////////////////////////////////////////
 
-#include "targetdate.h"
-
 #define CLOCK_ADDRESS (0x68*2)
 
 const uint8_t monthtab[] PROGMEM = {
@@ -210,7 +208,7 @@ days_since_2000(uint8_t y, uint8_t m, uint8_t d)
 #ifdef USE_SLEEP
 
 #define CLOCK_PRESCALER		1024
-#define OVERFLOW_COUNT		((2*F_CPU/CLOCK_PRESCALER)-1)
+#define OVERFLOW_COUNT		((F_CPU/(2*CLOCK_PRESCALER))-1)
 
 ISR(TIMER1_COMPA_vect)
 {
@@ -224,16 +222,14 @@ timer_init()
     TCCR1B = _BV(WGM12) | _BV(CS12) | _BV(CS10) ;
     OCR1A = OVERFLOW_COUNT ;
     TIMSK1 |= _BV(OCIE1A) ;
-
-    set_sleep_mode(SLEEP_MODE_IDLE) ;
-
+    // set_sleep_mode(SLEEP_MODE_IDLE) ;
     sei() ;
 }
 
 void __attribute__ ((noinline))
 dosleep()
 {
-    sleep_enable() ; sleep_cpu() ; sleep_disable() ;
+    // sleep_enable() ; sleep_cpu() ; sleep_disable() ;
 }
 
 #else
@@ -247,7 +243,8 @@ timer_init()
 void __attribute__ ((noinline))
 dosleep()
 {
-    __builtin_avr_delay_cycles(2*F_CPU) ;
+    __builtin_avr_delay_cycles(F_CPU/2) ;
+    PORTB ^= _BV(5) ;
 }
 
 #endif
@@ -280,23 +277,25 @@ display_message()
 ////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////
-// default LED is pin 5 on PORTB
+// We will use pin 13 as a heartbeat led, which will indicate that the 
+// clock is running.  We'll signal the real alarm condition by using
+// pin 12.
 ////////////////////////////////////////////////////////////////////////
 
 void
 alarm_init()
 {
-    DDRB |= _BV(5) ;
-    PORTB &= ~_BV(5) ;
+    DDRB = (_BV(5) | _BV(4)) ;
+    PORTB = ~(_BV(5) | _BV(4))  ;
 }
 
 void
 alarm(uint8_t on)
 {
     if (on)
-        PORTB |=  _BV(5) ;
+        PORTB |=  _BV(4) ;
     else
-        PORTB &= ~_BV(5) ;
+        PORTB &= ~_BV(4) ;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 
+# To save flash space, instead of storing the 
+# Y/M/D of the target date, it stores the number
+# of days from Jan 1, 2000 until that date.
+# This program helps you figure out what that
+# number is, so it can be compiled into the sketch.
+
+
+import sys
 import datetime
 
-target = datetime.datetime(2017, 11, 6, 0, 0, 0)
+target = datetime.datetime.strptime(sys.argv[1], "%x")
 
 mtab = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
@@ -19,12 +27,8 @@ def days_since_jan1_2000(y, m, d):
     t = t + d - 1
     return t
 
-print "/* AUTOMATICALLY GENERATED */"
-print "#define TARGET_YEAR\t%d" % (target.year-2000)
-print "#define TARGET_MONTH\t%d" % target.month
-print "#define TARGET_DAY\t%d" % target.day
-print "#define TARGET_HOUR\t%d" % target.hour
-print "#define TARGET_MINUTE\t%d" % target.minute
-print "#define TARGET_SECOND\t%d" % target.second
+days = days_since_jan1_2000(target.year, target.month, target.day)
 
-print "#define TARGET_DAYS_SINCE_JAN1_2000\t%d\n" % days_since_jan1_2000(target.year, target.month, target.day)
+print "Add the following line to the platform.ini:"
+print
+print "build_flags = -Os -DTARGET_DAYS_SINCE_JAN1_2000=%d" % days

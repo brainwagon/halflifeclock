@@ -134,7 +134,7 @@ tm1640_send(uint8_t data)
 }
 
 void
-tm1640_sendbuffer(uint8_t *t)
+tm1640_sendbuffer()
 {
     TM1640_PORT &= ~_BV(TM1640_DATA) ;
     TM1640_PORT |=  _BV(TM1640_DATA) ;
@@ -149,7 +149,7 @@ tm1640_sendbuffer(uint8_t *t)
     TM1640_PORT &= ~_BV(TM1640_DATA) ;
     tm1640_send(0xC0) ;
     for (uint8_t i=0; i<16; i++)
-	tm1640_send(*t++) ;
+	tm1640_send(tm1640_buf[i]) ;
     TM1640_PORT |=  _BV(TM1640_DATA) ;
 
     // extra pulse to clock...
@@ -243,7 +243,8 @@ timer_init()
 void __attribute__ ((noinline))
 dosleep()
 {
-    __builtin_avr_delay_cycles(F_CPU/2) ;
+
+    __builtin_avr_delay_cycles(F_CPU*2) ;
     PORTB ^= _BV(5) ;
 }
 
@@ -252,19 +253,19 @@ dosleep()
 
 ////////////////////////////////////////////////////////////////////////
 
-void
+void __attribute__ ((noinline))
 display_flash_message(const uint8_t *t)
 {
     for (uint8_t i=0; i<16; i++)
 	tm1640_buf[i] = pgm_read_byte(t+i) ;
-    tm1640_sendbuffer(tm1640_buf) ;
+    tm1640_sendbuffer() ;
     dosleep() ;
 }
 
 void
 display_message()
 {
-    tm1640_sendbuffer(tm1640_buf) ;
+    tm1640_sendbuffer() ;
     dosleep() ;
 }
 
@@ -357,7 +358,6 @@ main(void)
                 d1 = pgm_read_byte(tm1640_font+d1) ;
             if (days >= (1<<4))
                 d2 = pgm_read_byte(tm1640_font+d2) ;
-
             d3 = pgm_read_byte(tm1640_font+d3) ;
                 
             tm1640_buf[0x0] = 0b0000000;		// 

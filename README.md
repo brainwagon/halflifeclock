@@ -3,7 +3,7 @@
 Code for my "Half Life Clock" project, done for the hackaday.io 1K
 Code competition.
 
-![Image of the finished clock](https://github.com/brainwagon/halflifeclock/img/finished.jpg)
+![Image of the finished clock](https://github.com/brainwagon/halflifeclock/blob/master/img/finished.jpg)
 
 
 In February of 1991, I arrived for my first day at my employer,
